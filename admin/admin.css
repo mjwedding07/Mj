@@ -1,0 +1,583 @@
+/* ═══════════════════════════════════════════════════
+   ADMIN PANEL — admin.css
+   Palette: Purple #7b4de8 · Blue #4a5de8 · Light Blue #eef1fb
+   White · Yellow #ffc107 · Black #14142b
+
+   NOTE: the "Live Preview" mockups (.preview-*) intentionally use
+   the WEDDING SITE's own rose/gold colors (--site-*), NOT this
+   admin theme — they show admins exactly how the public site looks,
+   which stays pink regardless of the admin panel's own theme.
+═══════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Admin panel's own theme */
+  --p-blue:     #4a5de8;
+  --p-purple:   #7b4de8;
+  --p-gradient: linear-gradient(135deg, #4a5de8 0%, #7b4de8 100%);
+  --bg-light:   #eef1fb;
+  --card-white: #ffffff;
+  --black:      #14142b;
+  --text-mid:   #4b5563;
+  --text-light: #8b93a7;
+  --yellow:     #ffc107;
+  --yellow-bg:  #fff8e1;
+  --border-soft: rgba(74,93,232,0.15);
+
+  /* RSVP status colors (functional — unrelated to theme) */
+  --ok:         #2e9e63;
+  --ok-bg:      #e5f7ec;
+  --no:         #e5484d;
+  --no-bg:      #fdeceb;
+  --maybe:      #b8860b;
+  --maybe-bg:   #faf1dd;
+
+  /* Wedding SITE's own colors — used only in .preview-* mockups below,
+     so the "live preview" stays accurate to the real (pink) site */
+  --site-rose:       #c5768a;
+  --site-rose-dark:  #a85870;
+  --site-gold:       #c9a96e;
+  --site-text-dark:  #211717;
+  --site-text-light: #625151;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  color: var(--black);
+  background: var(--bg-light);
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--p-purple); color: white; }
+a { color: var(--p-blue); }
+button { font-family: inherit; }
+:focus-visible { outline: 2px solid var(--p-purple); outline-offset: 2px; }
+
+/* ─── LOGIN PAGE ─── */
+.login-body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--p-gradient);
+  padding: 24px;
+}
+.login-card {
+  width: 100%;
+  max-width: 340px;
+  background: var(--card-white);
+  border-radius: 20px;
+  padding: 40px 28px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(20,20,43,0.35);
+}
+.login-emblem {
+  width: 60px; height: 60px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: var(--p-gradient);
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 24px;
+}
+.login-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 26px;
+  color: var(--black);
+  margin-bottom: 2px;
+}
+.login-sub {
+  font-size: 13px;
+  color: var(--text-light);
+  letter-spacing: 0.5px;
+  margin-bottom: 28px;
+}
+.login-body .form-input {
+  background: var(--bg-light);
+  border-color: var(--border-soft);
+  color: var(--black);
+}
+.login-body .form-input::placeholder { color: var(--text-light); }
+.login-body .form-input:focus { border-color: var(--p-purple); box-shadow: 0 0 0 3px rgba(123,77,232,0.15); }
+.login-error {
+  color: var(--no);
+  font-size: 12px;
+  min-height: 16px;
+  margin: 4px 0 14px;
+}
+
+/* ─── SHARED FORM ELEMENTS ─── */
+.form-group { margin-bottom: 16px; text-align: left; }
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  margin-bottom: 6px;
+}
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--black);
+  background: white;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--p-purple);
+  box-shadow: 0 0 0 3px rgba(123,77,232,0.12);
+}
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-row { display: flex; gap: 12px; }
+.form-row .form-group { flex: 1; }
+
+.btn-primary {
+  width: 100%;
+  background: var(--p-gradient);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(74,93,232,0.35);
+  transition: transform .15s;
+}
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-secondary {
+  background: white;
+  color: var(--p-purple);
+  border: 1px solid var(--p-purple);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.btn-danger {
+  background: var(--no-bg);
+  color: var(--no);
+  border: 1px solid rgba(229,72,77,0.3);
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* ─── DASHBOARD SHELL ─── */
+.dash-header {
+  background: var(--black);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+.dash-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dash-title .heart { color: var(--yellow); font-size: 16px; }
+
+.dash-tabs {
+  display: flex;
+  background: white;
+  border-bottom: 1px solid var(--border-soft);
+  position: sticky; top: 61px; z-index: 99;
+  overflow-x: auto;
+}
+.dash-tab {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  padding: 14px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-light);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.dash-tab.active {
+  color: var(--p-purple);
+  border-bottom-color: var(--p-purple);
+}
+
+.dash-content { padding: 20px 16px 60px; max-width: 640px; margin: 0 auto; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.section-heading {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--black);
+  margin: 24px 0 12px;
+}
+.section-heading:first-child { margin-top: 0; }
+
+/* ─── MESSAGES TAB ─── */
+.summary-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.summary-card {
+  background: white;
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(74,93,232,0.08);
+  border: 1px solid var(--border-soft);
+}
+.summary-num { font-size: 20px; font-weight: 700; color: var(--black); display: block; }
+.summary-label { font-size: 10px; color: var(--text-light); text-transform: uppercase; letter-spacing: .5px; }
+
+.filter-row { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
+.filter-chip {
+  padding: 7px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--border-soft);
+  background: white;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-mid);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.filter-chip.active { background: var(--p-gradient); color: white; border-color: transparent; }
+
+.rsvp-card {
+  background: white;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 12px rgba(74,93,232,0.08);
+  border: 1px solid var(--border-soft);
+}
+.rsvp-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; margin-bottom: 6px; }
+.rsvp-name { font-weight: 600; font-size: 15px; color: var(--black); }
+.rsvp-phone { font-size: 12px; color: var(--p-blue); text-decoration: none; }
+.rsvp-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.rsvp-badge.yes   { background: var(--ok-bg);    color: var(--ok); }
+.rsvp-badge.no    { background: var(--no-bg);    color: var(--no); }
+.rsvp-badge.maybe { background: var(--maybe-bg); color: var(--maybe); }
+.rsvp-message { font-size: 13px; color: var(--text-mid); line-height: 1.5; margin: 8px 0; }
+.rsvp-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+.rsvp-time { font-size: 11px; color: var(--text-light); }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-light);
+  font-size: 13px;
+}
+.empty-state .emoji { font-size: 32px; display: block; margin-bottom: 8px; }
+
+/* ─── CONTENT EDITOR TAB ─── */
+.editor-card {
+  background: white;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border-soft);
+  box-shadow: 0 2px 10px rgba(74,93,232,0.06);
+}
+.editor-card-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--p-purple);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.repeat-item {
+  border: 1px dashed var(--border-soft);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.repeat-remove {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--no-bg);
+  color: var(--no);
+  border: none;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.add-row-btn {
+  width: 100%;
+  padding: 10px;
+  border: 1px dashed var(--p-purple);
+  background: var(--bg-light);
+  color: var(--p-purple);
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.save-bar {
+  position: sticky;
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg-light) 60%, transparent);
+  padding: 16px 0 0;
+}
+.save-status {
+  text-align: center;
+  font-size: 12px;
+  color: var(--ok);
+  min-height: 16px;
+  margin-top: 8px;
+}
+
+/* ─── LIVE PREVIEW (mini mockups of the real, pink wedding site) ───
+   These deliberately use --site-* colors, not the admin theme above,
+   so the preview stays accurate to what guests actually see. */
+.live-preview {
+  margin-top: 16px;
+  padding: 14px;
+  background: var(--bg-light);
+  border: 1px dashed rgba(74,93,232,0.3);
+  border-radius: 10px;
+}
+.live-preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--p-purple);
+  margin-bottom: 10px;
+}
+
+.preview-hero {
+  background: linear-gradient(160deg, #7a3a52 0%, #a85870 55%, #c5768a 100%);
+  border-radius: 10px;
+  padding: 20px 12px;
+  text-align: center;
+  color: white;
+}
+.preview-hero .p-badge {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 10px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 6px;
+}
+.preview-hero .p-names {
+  font-family: 'Great Vibes', cursive;
+  font-size: 26px;
+  line-height: 1.1;
+}
+
+.preview-names-row {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+  text-align: center;
+}
+.preview-names-row .p-fullname {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--site-text-dark);
+}
+.preview-names-row .p-role {
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--site-rose);
+  text-transform: uppercase;
+  margin-top: 2px;
+  font-weight: 600;
+}
+.preview-names-row .p-parent {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--site-text-light);
+  margin-top: 2px;
+}
+
+.preview-scratch {
+  background: linear-gradient(135deg, #f5d98a, #e0a5b8);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.preview-scratch .p-date {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--site-text-dark);
+}
+.preview-scratch .p-sub {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #6b3a4a;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.preview-venue {
+  text-align: center;
+}
+.preview-venue .p-vname {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--site-text-dark);
+}
+.preview-venue .p-vaddr {
+  font-size: 12px;
+  color: var(--site-text-light);
+  margin-top: 2px;
+}
+
+.preview-timeline-item, .preview-prewedding-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(197,118,138,0.15);
+}
+.preview-timeline-item:last-child, .preview-prewedding-item:last-child { border-bottom: none; }
+.preview-timeline-item .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--site-rose);
+  margin-top: 5px; flex-shrink: 0;
+}
+.preview-timeline-item .p-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--site-rose);
+}
+.preview-timeline-item .p-time {
+  font-size: 11px;
+  color: var(--site-text-light);
+}
+.preview-prewedding-item {
+  flex-direction: column;
+  text-align: center;
+  align-items: center;
+}
+.preview-prewedding-item .p-pwname {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--site-rose);
+}
+.preview-prewedding-item .p-pwdetail {
+  font-size: 11px;
+  color: var(--site-text-light);
+  margin-top: 2px;
+}
+
+.preview-invite {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--site-text-light);
+  text-align: center;
+  line-height: 1.7;
+}
+
+.preview-footer {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--site-rose);
+  text-align: center;
+}
+
+/* Loading spinner */
+.spinner {
+  width: 28px; height: 28px;
+  border: 3px solid rgba(74,93,232,0.15);
+  border-top-color: var(--p-purple);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin: 40px auto;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── INSTALL APP BUTTON ─── */
+.install-btn {
+  position: fixed;
+  bottom: 24px; right: 20px;
+  z-index: 500;
+  display: none;
+  align-items: center;
+  gap: 6px;
+  background: var(--p-gradient);
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 30px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 6px 20px rgba(20,20,43,0.3);
+  cursor: pointer;
+}
+.install-btn.show { display: flex; animation: fadeIn .4s ease; }
+.install-btn:active { transform: scale(0.96); }
+
+/* Login page variant sits centered under the form instead of floating */
+.login-body .install-btn {
+  position: static;
+  margin: 20px auto 0;
+  display: none;
+}
+.login-body .install-btn.show { display: inline-flex; }
+   
