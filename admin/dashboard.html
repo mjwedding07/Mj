@@ -8,9 +8,9 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Admin Dashboard — Jui & Malhar Wedding</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../../shared/icons/favicon-32x32.png">
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="../../shared/admin/css/admin.css">
 </head>
 <body>
 
@@ -207,9 +207,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="js/shared.js"></script>
-  <script src="js/admin.js"></script>
+  <!-- This wedding's unique ID — must match index.html's WEDDING_SLUG -->
+  <script>const WEDDING_SLUG = "a";</script>
+  <script src="../../shared/js/firebase-config.js"></script>
+  <script src="../../shared/admin/js/admin.js"></script>
 
 </body>
 </html>
