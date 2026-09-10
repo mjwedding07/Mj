@@ -1,12 +1,117 @@
 'use strict';
 
+/* Turns Firebase Auth error codes into plain-language messages */
+function friendlyAuthError(code) {
+  switch (code) {
+    case 'auth/invalid-email':
+      return 'That email address doesn\'t look right.';
+    case 'auth/user-not-found':
+    case 'auth/wrong-password':
+    case 'auth/invalid-credential':
+      return 'Incorrect email or password.';
+    case 'auth/too-many-requests':
+      return 'Too many attempts. Please wait a bit and try again.';
+    case 'auth/network-request-failed':
+      return 'Network error — check your connection.';
+    default:
+      return 'Login failed. Please try again.';
+  }
+}
+
+/* Guard for dashboard.html: redirect to login if not authenticated,
+   AND verify this logged-in user actually owns THIS wedding (WEDDING_SLUG).
+   Calls onReady(user) only once both checks pass. */
+function requireAuth(onReady) {
+  firebase.auth().onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = 'login.html';
+      return;
+    }
+    // Check that this user's uid matches the ownerUid stored on
+    // weddings/{WEDDING_SLUG} — this is what stops customer A's
+    // login from opening customer B's dashboard.
+    db.collection('weddings').doc(WEDDING_SLUG).get().then(doc => {
+      const ownerUid = doc.exists ? doc.data().ownerUid : null;
+      if (ownerUid && ownerUid === user.uid) {
+        onReady(user);
+      } else {
+        firebase.auth().signOut().finally(() => {
+          window.location.href = 'login.html?err=unauthorized';
+        });
+      }
+    }).catch(() => {
+      firebase.auth().signOut().finally(() => {
+        window.location.href = 'login.html?err=unauthorized';
+      });
+    });
+  });
+}
+
+function logout() {
+  firebase.auth().signOut().then(() => {
+    window.location.href = 'login.html';
+  });
+}
+
+'use strict';
+
+/* ═══════════════════════════════
+   ADMIN PWA INSTALL
+   Registers the site's service worker (its scope already covers
+   /admin/ since it's a sub-path) and wires up the visible
+   "Install App" button using the beforeinstallprompt event.
+═══════════════════════════════ */
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // '../sw.js' -> registered scope defaults to its own folder (site root),
+    // which covers /admin/ too since it's a sub-path.
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .then(reg => console.log('[Admin] Service worker registered:', reg.scope))
+      .catch(err => console.warn('[Admin] Service worker registration failed:', err));
+  });
+}
+
+let deferredAdminInstallPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredAdminInstallPrompt = e;
+  document.getElementById('admin-install-btn')?.classList.add('show');
+});
+
+function installAdminApp() {
+  if (!deferredAdminInstallPrompt) return;
+  deferredAdminInstallPrompt.prompt();
+  deferredAdminInstallPrompt.userChoice.finally(() => {
+    deferredAdminInstallPrompt = null;
+    document.getElementById('admin-install-btn')?.classList.remove('show');
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('admin-install-btn')?.classList.remove('show');
+  deferredAdminInstallPrompt = null;
+});
+
+/* ═══════════════════════════════════════════════════
+   DASHBOARD LOGIC (only auto-runs on dashboard.html —
+   see the guard at the top of this section)
+═══════════════════════════════════════════════════ */
+'use strict';
+
 let allRsvps = [];
 let currentFilter = 'all';
 
-requireAuth(() => {
-  listenToRsvps();
-  loadContentIntoEditor();
-});
+// Only auto-run the dashboard init when we're actually ON the dashboard
+// page (checked via a dashboard-only element). This guard is what makes
+// it safe for this file to also be loaded on login.html.
+if (document.getElementById('rsvp-list')) {
+  requireAuth(() => {
+    listenToRsvps();
+    loadContentIntoEditor();
+  });
+}
 
 /* ═══════════════════════════════
    TABS
@@ -21,7 +126,7 @@ function switchTab(tab) {
    MESSAGES TAB
 ═══════════════════════════════ */
 function listenToRsvps() {
-  db.collection('rsvps').orderBy('sentAt', 'desc')
+  db.collection('weddings').doc(WEDDING_SLUG).collection('rsvps').orderBy('sentAt', 'desc')
     .onSnapshot(snapshot => {
       allRsvps = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       renderSummary();
@@ -82,7 +187,7 @@ function renderRsvpList() {
 
 function deleteRsvp(id) {
   if (!confirm('Delete this message? This can\'t be undone.')) return;
-  db.collection('rsvps').doc(id).delete()
+  db.collection('weddings').doc(WEDDING_SLUG).collection('rsvps').doc(id).delete()
     .catch(err => alert('Could not delete: ' + err.message));
 }
 
@@ -103,7 +208,7 @@ function escapeHTML(str) {
    EDIT CONTENT TAB
 ═══════════════════════════════ */
 function loadContentIntoEditor() {
-  db.collection('siteContent').doc('main').get()
+  db.collection('weddings').doc(WEDDING_SLUG).get()
     .then(doc => {
       const data = doc.exists ? doc.data() : {};
       const c = data.coupleNames || {};
@@ -369,7 +474,7 @@ function saveContent() {
   status.textContent = '';
   status.style.color = 'var(--ok)';
 
-  db.collection('siteContent').doc('main').set(data, { merge: true })
+  db.collection('weddings').doc(WEDDING_SLUG).set(data, { merge: true })
     .then(() => {
       status.textContent = '✓ Saved — the site now reflects these changes.';
     })
