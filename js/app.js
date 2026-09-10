@@ -24,7 +24,7 @@ if ('serviceWorker' in navigator) {
     // Relative path (not '/sw.js') so this also works when the site is
     // hosted in a sub-folder, e.g. GitHub Pages project sites:
     // https://username.github.io/repo-name/
-    navigator.serviceWorker.register('sw.js')
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
       .then(reg => console.log('[App] Service worker registered:', reg.scope))
       .catch(err => console.warn('[App] Service worker registration failed:', err));
   });
@@ -498,7 +498,7 @@ function sendMessage() {
   btn.disabled = true;
   btn.textContent = 'Sending...';
 
-  db.collection('rsvps').add(rsvp)
+  db.collection('weddings').doc(WEDDING_SLUG).collection('rsvps').add(rsvp)
     .then(() => {
       showToast('✓ Message sent!');
       nameEl.value = '';
@@ -570,7 +570,7 @@ function toggleMusic() {
    hardcoded HTML already on the page stays as-is (graceful fallback).
 ═══════════════════════════════ */
 function loadSiteContent() {
-  db.collection('siteContent').doc('main').get()
+  db.collection('weddings').doc(WEDDING_SLUG).get()
     .then(doc => {
       if (!doc.exists) return; // admin hasn't saved anything yet — keep static content
       const data = doc.data();
