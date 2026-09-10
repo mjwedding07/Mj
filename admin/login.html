@@ -7,9 +7,9 @@
 <meta name="robots" content="noindex, nofollow">
 <title>Admin Login — Jui & Malhar Wedding</title>
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../../shared/icons/favicon-32x32.png">
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/admin.css">
+<link rel="stylesheet" href="../../shared/admin/css/admin.css">
 </head>
 <body class="login-body">
 
@@ -39,13 +39,37 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="../js/firebase-config.js"></script>
-  <script src="js/shared.js"></script>
+  <!-- This wedding's unique ID — must match index.html's WEDDING_SLUG -->
+  <script>const WEDDING_SLUG = "a";</script>
+  <script src="../../shared/js/firebase-config.js"></script>
+  <script src="../../shared/admin/js/admin.js"></script>
 
   <script>
-    // If already logged in, skip straight to the dashboard
+    // Show a clear message if we were bounced back here for using
+    // the wrong account on this wedding's link.
+    if (new URLSearchParams(window.location.search).get('err') === 'unauthorized') {
+      document.getElementById('login-error').textContent =
+        'This account is not linked to this wedding.';
+    }
+
+    function goToDashboardIfOwner(user) {
+      db.collection('weddings').doc(WEDDING_SLUG).get().then(doc => {
+        const ownerUid = doc.exists ? doc.data().ownerUid : null;
+        if (ownerUid && ownerUid === user.uid) {
+          window.location.href = 'dashboard.html';
+        } else {
+          firebase.auth().signOut().finally(() => {
+            document.getElementById('login-error').textContent =
+              'This account is not linked to this wedding.';
+          });
+        }
+      });
+    }
+
+    // If already logged in (e.g. session from another wedding's tab),
+    // only auto-jump to the dashboard if THIS account owns THIS wedding.
     firebase.auth().onAuthStateChanged(user => {
-      if (user) window.location.href = 'dashboard.html';
+      if (user) goToDashboardIfOwner(user);
     });
 
     document.getElementById('login-form').addEventListener('submit', (e) => {
@@ -60,9 +84,11 @@
       btn.textContent = 'Logging in...';
 
       firebase.auth().signInWithEmailAndPassword(email, password)
-        .then(() => { window.location.href = 'dashboard.html'; })
+        .then(cred => goToDashboardIfOwner(cred.user))
         .catch(err => {
           errorEl.textContent = friendlyAuthError(err.code);
+        })
+        .finally(() => {
           btn.disabled = false;
           btn.textContent = 'Login';
         });
