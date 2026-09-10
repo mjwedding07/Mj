@@ -11,7 +11,7 @@
 
 'use strict';
 
-const CACHE_NAME    = 'wedding-v1.4.0';
+const CACHE_NAME    = 'wedding-v2.0.0-multitenant';
 const OFFLINE_PAGE  = 'offline.html';
 
 /* ── Files to pre-cache on install ──
@@ -23,23 +23,19 @@ const OFFLINE_PAGE  = 'offline.html';
    NOT precached here — the network-first/stale-while-revalidate logic
    below still caches them opportunistically once fetched.            */
 const PRECACHE_ASSETS = [
-  './',
-  'index.html',
-  'css/style.css',
-  'js/app.js',
-  'js/firebase-config.js',
-  'manifest.json',
   'offline.html',
-  'lottie/confetti-burst.json',
-  'icons/icon-192x192.png',
-  'icons/icon-512x512.png',
-  'admin/login.html',
-  'admin/dashboard.html',
-  'admin/manifest.json',
-  'admin/css/admin.css',
-  'admin/js/shared.js',
-  'admin/js/admin.js'
+  'shared/css/style.css',
+  'shared/js/app.js',
+  'shared/js/firebase-config.js',
+  'shared/icons/icon-192x192.png',
+  'shared/icons/icon-512x512.png',
+  'shared/admin/css/admin.css',
+  'shared/admin/js/admin.js'
 ];
+/* NOTE: each customer's own index.html / admin pages are NOT listed here
+   (there are many, one per wedding, e.g. /a/index.html, /b/index.html...).
+   They get cached automatically on first visit via the network-first
+   HTML strategy below, so this doesn't need editing per new customer. */
 
 /* ── CDN assets to cache on first use ── */
 const CDN_PATTERNS = [
